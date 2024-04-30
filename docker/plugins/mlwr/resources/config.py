@@ -12,8 +12,9 @@ from mwdb.model.object import ObjectTypeConflictError
 from mwdb.resources import load_schema, loads_schema, requires_authorization, requires_capabilities
 from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
 
-from ..schema.blob import BlobCreateSpecSchema
-from ..schema.config import (
+from mlwr.model import Config, TextBlob, db
+from mlwr.schema.blob import BlobCreateSpecSchema
+from mlwr.schema.config import (
     ConfigCreateRequestSchema,
     ConfigItemResponseSchema,
     ConfigLegacyCreateRequestSchema,
@@ -21,8 +22,6 @@ from ..schema.config import (
     ConfigStatsRequestSchema,
     ConfigStatsResponseSchema,
 )
-
-from ..model import Config, TextBlob, db
 
 
 class ConfigStatsResource(Resource):

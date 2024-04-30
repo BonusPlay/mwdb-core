@@ -1,6 +1,16 @@
 import logging
 
 from mwdb.core.plugins import PluginAppContext, PluginHookHandler
+# for some reason attempts to re-export these in local search submodule have failed
+from mwdb.core.search.fields import (
+    SizeField,
+    StringField,
+    DatetimeField,
+    BaseField,
+    MultiBaseField,
+    JSONBaseField
+)
+
 from .resources.blob import TextBlobItemResource, TextBlobResource
 from .resources.config import (
     ConfigItemResource,
@@ -26,16 +36,26 @@ from .model import (
     File,
     TextBlob,
 )
+from .hooks import MlwrHookHandler
+from .search.fields import (
+    # SizeField,
+    # StringField,
+    # DatetimeField,
+    FileNameField,
+    MultiFileField,
+    ConfigField,
+    MultiConfigField,
+    MultiBlobField
+)
 
 
 logger = logging.getLogger("mwdb.plugin.mlwr")
 
 
-class MlwrHookHandler:
-    ...
-
-
 def entrypoint(app_context: PluginAppContext):
+    # hooks
+    app_context.register_hook_handler(MlwrHookHandler)
+
     # File endpoints
     app_context.register_resource(FileResource, "/file")
     app_context.register_resource(FileItemResource, "/file/<hash64:identifier>")

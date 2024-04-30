@@ -8,8 +8,8 @@ from mwdb.model.object import ObjectTypeConflictError
 from mwdb.resources import loads_schema, requires_authorization, requires_capabilities
 from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
 
-from ..model import TextBlob
-from ..schema.blob import (
+from mlwr.model import TextBlob
+from mlwr.schema.blob import (
     BlobCreateRequestSchema,
     BlobItemResponseSchema,
     BlobLegacyCreateRequestSchema,

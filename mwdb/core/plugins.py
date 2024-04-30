@@ -17,11 +17,15 @@ from mwdb.model.user import User
 
 logger = getLogger()
 
-_plugin_handlers = defaultdict(list)
+_plugin_handlers = []
 loaded_plugins = {}
 
 
 class PluginAppContext(object):
+    def register_hook_handler(self, hook_handler_cls):
+        global _plugin_handlers
+        _plugin_handlers.append(hook_handler_cls())
+
     def register_resource(self, resource, *urls, **kwargs):
         api.add_resource(resource, *urls, **kwargs)
 
@@ -38,26 +42,14 @@ class PluginAppContext(object):
         register_object_mapping(key, type_)
 
 
-def hook_handler_method(name):
-    global _plugin_handlers
-
-    def wrapper(meth):
-
-
-        @functools.wraps(meth)
-        def hook_handler(self, *args, **kwargs):
-            if self.is_callee:
-                meth(self, *args, **kwargs)
-            else:
-                call_hook(name, *args, **kwargs)
-        return hook_handler
-    
-    # backwards compatibility - if no name is provided, use method name
-    if not name:
-        ...
-
-    _plugin_handlers[name].append(wrapper)
-    return wrapper
+def hook_handler_method(meth):
+    @functools.wraps(meth)
+    def hook_handler(self, *args, **kwargs):
+        if self.is_callee:
+            meth(self, *args, **kwargs)
+        else:
+            call_hook(meth.__name__, *args, **kwargs)
+    return hook_handler
 
 
 class PluginHookBase(object):

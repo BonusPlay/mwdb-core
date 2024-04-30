@@ -9,8 +9,8 @@ from mwdb.model.object import ObjectTypeConflictError
 from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
 from mwdb.resources import load_schema, requires_authorization, requires_capabilities
 
-from ..model.file import File, EmptyFileError
-from ..schema.file import (
+from mlwr.model.file import File, EmptyFileError
+from mlwr.schema.file import (
     FileCreateRequestSchema,
     FileDownloadTokenResponseSchema,
     FileItemResponseSchema,

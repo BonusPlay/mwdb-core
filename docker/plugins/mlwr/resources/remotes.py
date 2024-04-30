@@ -7,7 +7,6 @@ from werkzeug.exceptions import BadRequest, Conflict, Forbidden, NotFound
 
 from mwdb.core.capabilities import Capabilities
 from mwdb.core.config import app_config
-from mwdb.core.plugins import hooks
 from mwdb.core.service import Resource
 from mwdb.model.object import ObjectTypeConflictError
 from mwdb.resources import get_shares_for_upload, loads_schema, logger, requires_authorization
@@ -15,10 +14,11 @@ from mwdb.resources.remotes import RemotePullResource
 from mwdb.schema.remotes import RemoteOptionsRequestSchema, RemotesListResponseSchema
 from mwdb.version import app_build_version
 
-from ..model import Config, File, TextBlob, db
-from ..schema.blob import BlobItemResponseSchema
-from ..schema.config import ConfigItemResponseSchema
-from ..schema.file import FileItemResponseSchema
+from mlwr.hooks import hooks
+from mlwr.model import Config, File, TextBlob, db
+from mlwr.schema.blob import BlobItemResponseSchema
+from mlwr.schema.config import ConfigItemResponseSchema
+from mlwr.schema.file import FileItemResponseSchema
 
 
 class RemoteFilePullResource(RemotePullResource):
