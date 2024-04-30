@@ -2,12 +2,9 @@ from typing import Dict, Tuple, Type
 
 from mwdb.model import (
     Comment,
-    Config,
-    File,
     KartonAnalysis,
     Object,
     Tag,
-    TextBlob,
     User,
 )
 
@@ -16,13 +13,8 @@ from .fields import (
     AttributeField,
     BaseField,
     CommentAuthorField,
-    ConfigField,
     DatetimeField,
     FavoritesField,
-    FileNameField,
-    MultiBlobField,
-    MultiConfigField,
-    MultiFileField,
     RelationField,
     ShareField,
     SharerField,
@@ -36,11 +28,7 @@ from .fields import (
 from .parse_helpers import PathSelector, parse_field_path
 
 object_mapping: Dict[str, Type[Object]] = {
-    "file": File,
     "object": Object,
-    "static": Config,  # legacy
-    "config": Config,
-    "blob": TextBlob,
 }
 
 field_mapping: Dict[str, Dict[str, BaseField]] = {
@@ -61,34 +49,17 @@ field_mapping: Dict[str, Dict[str, BaseField]] = {
         "comment_author": CommentAuthorField(Object.comment_authors, User.login),
         "upload_count": UploadCountField(),
     },
-    File.__name__: {
-        "name": FileNameField(),
-        "size": SizeField(File.file_size),
-        "type": StringField(File.file_type),
-        "md5": StringField(File.md5),
-        "sha1": StringField(File.sha1),
-        "sha256": StringField(File.sha256),
-        "sha512": StringField(File.sha512),
-        "ssdeep": StringField(File.ssdeep),
-        "crc32": StringField(File.crc32),
-        "multi": MultiFileField(),
-    },
-    Config.__name__: {
-        "type": StringField(Config.config_type),
-        "family": StringField(Config.family),
-        "cfg": ConfigField(),
-        "multi": MultiConfigField(),
-    },
-    TextBlob.__name__: {
-        "name": StringField(TextBlob.blob_name),
-        "size": SizeField(TextBlob.blob_size),
-        "type": StringField(TextBlob.blob_type),
-        "content": StringField(TextBlob._content),
-        "first_seen": DatetimeField(TextBlob.upload_time),
-        "last_seen": DatetimeField(TextBlob.last_seen),
-        "multi": MultiBlobField(),
-    },
 }
+
+
+def register_field_mapping(key: str, mapper: Dict[str, BaseField]):
+    global field_mapping
+    field_mapping[key] = mapper
+
+
+def register_object_mapping(name: str, type_: Type[Object]):
+    global object_mapping
+    object_mapping[name] = type_
 
 
 def get_field_mapper(

@@ -1,14 +1,15 @@
 from marshmallow import Schema, fields
 
-from .config import ConfigItemResponseSchema
-from .object import (
+from mwdb.schema.object import (
     ObjectCreateRequestSchemaBase,
     ObjectItemResponseSchema,
     ObjectLegacyMetakeysMixin,
     ObjectListItemResponseSchema,
     ObjectListResponseSchemaBase,
 )
-from .utils import UTCDateTime
+from mwdb.schema.utils import UTCDateTime
+
+from .config import ConfigItemResponseSchema
 
 
 # Merge it with BlobCreateRequestSchema during legacy upload remove

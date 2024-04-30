@@ -23,9 +23,9 @@ from mwdb.core.util import (
     get_fd_path,
     get_s3_client,
 )
+from mwdb.model.object import Object
 
 from . import db
-from .object import Object
 
 
 class EmptyFileError(ValueError):

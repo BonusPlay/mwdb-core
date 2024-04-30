@@ -8,7 +8,7 @@ from werkzeug.exceptions import BadRequest, Forbidden, NotFound, Unauthorized
 
 from mwdb.core import log
 from mwdb.core.capabilities import Capabilities
-from mwdb.model import Config, File, Group, Object, TextBlob
+from mwdb.model import Group, Object
 
 logger = log.getLogger()
 
@@ -50,7 +50,7 @@ def requires_authorization(f):
 
 
 def get_type_from_str(s):
-    object_types = {"object": Object, "file": File, "config": Config, "blob": TextBlob}
+    object_types = {"object": Object}
     if s not in object_types:
         # Should never happen, routes should be restricted on route definition level
         raise ValueError(f"Incorrect object type '{s}'")

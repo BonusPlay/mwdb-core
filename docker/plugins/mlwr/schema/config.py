@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-from .object import (
+from mwdb.schema.object import (
     ObjectCreateRequestSchemaBase,
     ObjectItemResponseSchema,
     ObjectLegacyMetakeysMixin,

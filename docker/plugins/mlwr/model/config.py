@@ -5,9 +5,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 
 from mwdb.core.karton import send_config_to_karton
 from mwdb.core.util import config_decode, config_dhash, config_encode
+from mwdb.model.object import Object
 
 from . import db
-from .object import Object
 
 
 class Config(Object):

@@ -8,10 +8,12 @@ from mwdb.core.capabilities import Capabilities
 from mwdb.core.deprecated import DeprecatedFeature, deprecated_endpoint
 from mwdb.core.plugins import hooks
 from mwdb.core.service import Resource
-from mwdb.model import Config, TextBlob, db
 from mwdb.model.object import ObjectTypeConflictError
-from mwdb.schema.blob import BlobCreateSpecSchema
-from mwdb.schema.config import (
+from mwdb.resources import load_schema, loads_schema, requires_authorization, requires_capabilities
+from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
+
+from ..schema.blob import BlobCreateSpecSchema
+from ..schema.config import (
     ConfigCreateRequestSchema,
     ConfigItemResponseSchema,
     ConfigLegacyCreateRequestSchema,
@@ -20,8 +22,7 @@ from mwdb.schema.config import (
     ConfigStatsResponseSchema,
 )
 
-from . import load_schema, loads_schema, requires_authorization, requires_capabilities
-from .object import ObjectItemResource, ObjectResource, ObjectUploader
+from ..model import Config, TextBlob, db
 
 
 class ConfigStatsResource(Resource):

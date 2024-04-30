@@ -2,14 +2,14 @@ import json
 
 from marshmallow import Schema, fields, pre_load
 
-from .config import ConfigItemResponseSchema
-from .object import (
+from mwdb.schema.object import (
     ObjectCreateRequestSchemaBase,
     ObjectItemResponseSchema,
     ObjectLegacyMetakeysMixin,
     ObjectListItemResponseSchema,
     ObjectListResponseSchemaBase,
 )
+from .config import ConfigItemResponseSchema
 
 
 class FileCreateRequestSchema(Schema):

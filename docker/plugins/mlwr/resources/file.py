@@ -5,19 +5,18 @@ from mwdb.core.capabilities import Capabilities
 from mwdb.core.deprecated import DeprecatedFeature, deprecated_endpoint
 from mwdb.core.plugins import hooks
 from mwdb.core.service import Resource
-from mwdb.model import File
-from mwdb.model.file import EmptyFileError
 from mwdb.model.object import ObjectTypeConflictError
-from mwdb.schema.file import (
+from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
+from mwdb.resources import load_schema, requires_authorization, requires_capabilities
+
+from ..model.file import File, EmptyFileError
+from ..schema.file import (
     FileCreateRequestSchema,
     FileDownloadTokenResponseSchema,
     FileItemResponseSchema,
     FileLegacyCreateRequestSchema,
     FileListResponseSchema,
 )
-
-from . import load_schema, requires_authorization, requires_capabilities
-from .object import ObjectItemResource, ObjectResource, ObjectUploader
 
 
 class FileUploader(ObjectUploader):

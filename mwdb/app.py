@@ -35,20 +35,7 @@ from mwdb.resources.auth import (
     RequestPasswordChangeResource,
     ValidateTokenResource,
 )
-from mwdb.resources.blob import TextBlobItemResource, TextBlobResource
 from mwdb.resources.comment import CommentDeleteResource, CommentResource
-from mwdb.resources.config import (
-    ConfigItemResource,
-    ConfigResource,
-    ConfigStatsResource,
-)
-from mwdb.resources.download import DownloadResource, RequestSampleDownloadResource
-from mwdb.resources.file import (
-    FileDownloadResource,
-    FileDownloadZipResource,
-    FileItemResource,
-    FileResource,
-)
 from mwdb.resources.group import GroupListResource, GroupMemberResource, GroupResource
 from mwdb.resources.karton import KartonAnalysisResource, KartonObjectResource
 from mwdb.resources.metakey import (
@@ -78,16 +65,7 @@ from mwdb.resources.object import (
 )
 from mwdb.resources.quick_query import QuickQueryItemResource, QuickQueryResource
 from mwdb.resources.relations import ObjectChildResource, RelationsResource
-from mwdb.resources.remotes import (
-    RemoteAPIResource,
-    RemoteConfigPullResource,
-    RemoteConfigPushResource,
-    RemoteFilePullResource,
-    RemoteFilePushResource,
-    RemoteListResource,
-    RemoteTextBlobPullResource,
-    RemoteTextBlobPushResource,
-)
+from mwdb.resources.remotes import RemoteAPIResource, RemoteListResource
 from mwdb.resources.search import SearchResource
 from mwdb.resources.server import (
     PingResource,
@@ -252,18 +230,14 @@ api.add_resource(ObjectItemResource, "/object/<hash64:identifier>")
 api.add_resource(ObjectFavoriteResource, "/object/<hash64:identifier>/favorite")
 
 if app_config.mwdb.enable_3rd_party_sharing_consent:
-    api.add_resource(
-        ObjectShare3rdPartyResource, "/object/<hash64:identifier>/share_3rd_party"
-    )
+    api.add_resource(ObjectShare3rdPartyResource, "/object/<hash64:identifier>/share_3rd_party")
 
 # Count endpoint
 api.add_resource(ObjectCountResource, "/<any(file, config, blob, object):type>/count")
 
 # Tag endpoints
 api.add_resource(TagListResource, "/tag")
-api.add_resource(
-    TagResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/tag"
-)
+api.add_resource(TagResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/tag")
 
 # Comment endpoints
 api.add_resource(
@@ -277,54 +251,22 @@ api.add_resource(
 )
 
 # Share endpoints
-api.add_resource(
-    ShareResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/share"
-)
+api.add_resource(ShareResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/share")
 api.add_resource(ShareGroupListResource, "/share")
 
 # Relation endpoints
-api.add_resource(
-    RelationsResource,
-    "/<any(file, config, blob, object):type>/<hash64:identifier>/relations",
-)
-api.add_resource(
-    ObjectChildResource,
-    "/<any(file, config, blob, object):type>/<hash64:parent>/child/<hash64:child>",
-)
-
-# File endpoints
-api.add_resource(FileResource, "/file")
-api.add_resource(FileItemResource, "/file/<hash64:identifier>")
-api.add_resource(FileDownloadResource, "/file/<hash64:identifier>/download")
-api.add_resource(FileDownloadZipResource, "/file/<hash64:identifier>/download/zip")
-
-# Config endpoints
-api.add_resource(ConfigResource, "/config")
-api.add_resource(ConfigStatsResource, "/config/stats")
-api.add_resource(ConfigItemResource, "/config/<hash64:identifier>")
-
-# Blob endpoints
-api.add_resource(TextBlobResource, "/blob")
-api.add_resource(TextBlobItemResource, "/blob/<hash64:identifier>")
-
-# Download endpoints
-api.add_resource(RequestSampleDownloadResource, "/request/sample/<identifier>")
-api.add_resource(DownloadResource, "/download/<access_token>")
+api.add_resource(RelationsResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/relations")
+api.add_resource(ObjectChildResource, "/<any(file, config, blob, object):type>/<hash64:parent>/child/<hash64:child>")
 
 # Search endpoints
 api.add_resource(SearchResource, "/search")
 
 # Quick query endpoints
-api.add_resource(
-    QuickQueryResource, "/<any(file, config, blob, object):type>/quick_query"
-)
+api.add_resource(QuickQueryResource, "/<any(file, config, blob, object):type>/quick_query")
 api.add_resource(QuickQueryItemResource, "/quick_query/<int:id>")
 
 # Attribute endpoints
-api.add_resource(
-    AttributeListResource,
-    "/<any(file, config, blob, object):type>/<hash64:identifier>/attribute",
-)
+api.add_resource(AttributeListResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/attribute")
 api.add_resource(
     AttributeResource,
     "/<any(file, config, blob, object):type>/<hash64:identifier>"
@@ -336,32 +278,20 @@ api.add_resource(AttributePermissionResource, "/attribute/<key>/permissions")
 
 # Attribute (metakey) deprecated endpoints
 api.add_resource(MetakeyListDefinitionResource, "/meta/list/<any(read, set):access>")
-api.add_resource(
-    MetakeyResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/meta"
-)
+api.add_resource(MetakeyResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/meta")
 api.add_resource(MetakeyListDefinitionManageResource, "/meta/manage")
 api.add_resource(MetakeyDefinitionManageResource, "/meta/manage/<key>")
-api.add_resource(
-    MetakeyPermissionResource, "/meta/manage/<key>/permissions/<group_name>"
-)
+api.add_resource(MetakeyPermissionResource, "/meta/manage/<key>/permissions/<group_name>")
 
 # Karton endpoints
-api.add_resource(
-    KartonObjectResource,
-    "/<any(file, config, blob, object):type>/<hash64:identifier>/karton",
-)
-api.add_resource(
-    KartonAnalysisResource,
-    "/<any(file, config, blob, object):type>/<hash64:identifier>/karton/<analysis_id>",
-)
+api.add_resource(KartonObjectResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/karton")
+api.add_resource(KartonAnalysisResource, "/<any(file, config, blob, object):type>/<hash64:identifier>/karton/<analysis_id>")
 
 # User endpoints
 api.add_resource(UserListResource, "/user")
 api.add_resource(UserResource, "/user/<login>")
 api.add_resource(UserProfileResource, "/profile/<login>")
-api.add_resource(
-    UserRequestPasswordChangeResource, "/user/<login>/request_password_change"
-)
+api.add_resource(UserRequestPasswordChangeResource, "/user/<login>/request_password_change")
 api.add_resource(UserGetPasswordChangeTokenResource, "/user/<login>/change_password")
 api.add_resource(UserPendingResource, "/user/<login>/pending")
 
@@ -384,24 +314,6 @@ if app_config.mwdb.enable_oidc:
 # Remote endpoints
 api.add_resource(RemoteListResource, "/remote")
 api.add_resource(RemoteAPIResource, "/remote/<remote_name>/api/<path:remote_path>")
-api.add_resource(
-    RemoteFilePullResource, "/remote/<remote_name>/pull/file/<hash64:identifier>"
-)
-api.add_resource(
-    RemoteConfigPullResource, "/remote/<remote_name>/pull/config/<hash64:identifier>"
-)
-api.add_resource(
-    RemoteTextBlobPullResource, "/remote/<remote_name>/pull/blob/<hash64:identifier>"
-)
-api.add_resource(
-    RemoteFilePushResource, "/remote/<remote_name>/push/file/<hash64:identifier>"
-)
-api.add_resource(
-    RemoteConfigPushResource, "/remote/<remote_name>/push/config/<hash64:identifier>"
-)
-api.add_resource(
-    RemoteTextBlobPushResource, "/remote/<remote_name>/push/blob/<hash64:identifier>"
-)
 
 if metrics_enabled():
     api.add_resource(MetricsResource, "/varz")

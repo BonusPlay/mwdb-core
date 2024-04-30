@@ -3,27 +3,25 @@ import functools
 import importlib
 import pkgutil
 import sys
+from collections import defaultdict
 
 from mwdb.core.app import api, app
 from mwdb.core.config import app_config
 from mwdb.core.log import getLogger
+from mwdb.core.search.mappings import register_field_mapping, register_object_mapping
 from mwdb.core.util import is_subdir
-from mwdb.model import Comment, Config, File, Object, Tag, TextBlob
+from mwdb.model import Comment, Object, Tag
 from mwdb.model.attribute import Attribute, AttributeDefinition
 from mwdb.model.group import Group
 from mwdb.model.user import User
 
 logger = getLogger()
 
-_plugin_handlers = []
+_plugin_handlers = defaultdict(list)
 loaded_plugins = {}
 
 
 class PluginAppContext(object):
-    def register_hook_handler(self, hook_handler_cls):
-        global _plugin_handlers
-        _plugin_handlers.append(hook_handler_cls())
-
     def register_resource(self, resource, *urls, **kwargs):
         api.add_resource(resource, *urls, **kwargs)
 
@@ -33,16 +31,33 @@ class PluginAppContext(object):
     def register_schema_spec(self, schema_name, schema):
         api.spec.components.schema(schema_name, schema=schema)
 
+    def register_field_mapping(self, key, mapper):
+        register_field_mapping(key, mapper)
 
-def hook_handler_method(meth):
-    @functools.wraps(meth)
-    def hook_handler(self, *args, **kwargs):
-        if self.is_callee:
-            meth(self, *args, **kwargs)
-        else:
-            call_hook(meth.__name__, *args, **kwargs)
+    def register_object_mapping(self, key, type_):
+        register_object_mapping(key, type_)
 
-    return hook_handler
+
+def hook_handler_method(name):
+    global _plugin_handlers
+
+    def wrapper(meth):
+
+
+        @functools.wraps(meth)
+        def hook_handler(self, *args, **kwargs):
+            if self.is_callee:
+                meth(self, *args, **kwargs)
+            else:
+                call_hook(name, *args, **kwargs)
+        return hook_handler
+    
+    # backwards compatibility - if no name is provided, use method name
+    if not name:
+        ...
+
+    _plugin_handlers[name].append(wrapper)
+    return wrapper
 
 
 class PluginHookBase(object):
@@ -62,39 +77,7 @@ class PluginHookBase(object):
         pass
 
     @hook_handler_method
-    def on_created_file(self, file: File):
-        pass
-
-    @hook_handler_method
-    def on_reuploaded_file(self, file: File):
-        pass
-
-    @hook_handler_method
-    def on_removed_file(self, file: File):
-        pass
-
-    @hook_handler_method
-    def on_created_config(self, config: Config):
-        pass
-
-    @hook_handler_method
-    def on_reuploaded_config(self, config: Config):
-        pass
-
-    @hook_handler_method
-    def on_removed_config(self, config: Config):
-        pass
-
-    @hook_handler_method
-    def on_created_text_blob(self, blob: TextBlob):
-        pass
-
-    @hook_handler_method
-    def on_reuploaded_text_blob(self, blob: TextBlob):
-        pass
-
-    @hook_handler_method
-    def on_removed_text_blob(self, blob: TextBlob):
+    def on_changed_object(self, object: Object):
         pass
 
     @hook_handler_method
@@ -179,10 +162,6 @@ class PluginHookBase(object):
 
     @hook_handler_method
     def on_updated_membership(self, group: Group, user: User):
-        pass
-
-    @hook_handler_method
-    def on_changed_object(self, object: Object):
         pass
 
 
@@ -292,10 +271,6 @@ def get_plugin_info():
 def call_hook(hook_name, *args, **kwargs):
     global _plugin_handlers
 
-    if not hasattr(PluginHookBase, hook_name):
-        logger.warning("Undefined hook: {}".format(hook_name))
-        return
-
     if not app_config.mwdb.enable_hooks:
         logger.info(
             "Hook {} will not be ran because enable_hooks is disabled.".format(
@@ -308,6 +283,12 @@ def call_hook(hook_name, *args, **kwargs):
         try:
             fn = getattr(hook_handler, hook_name)
             fn(*args, **kwargs)
+        except AttributeError:
+            logger.info(
+                "Hook handler {} doesn't implement handler for hook {}".format(
+                    hook_handler.__name__
+                )
+            )
         except Exception:
             logger.exception("Hook {} raised exception".format(hook_name))
 

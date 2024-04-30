@@ -4,18 +4,17 @@ from werkzeug.exceptions import Conflict
 from mwdb.core.capabilities import Capabilities
 from mwdb.core.deprecated import DeprecatedFeature, deprecated_endpoint
 from mwdb.core.plugins import hooks
-from mwdb.model import TextBlob
 from mwdb.model.object import ObjectTypeConflictError
-from mwdb.schema.blob import (
+from mwdb.resources import loads_schema, requires_authorization, requires_capabilities
+from mwdb.resources.object import ObjectItemResource, ObjectResource, ObjectUploader
+
+from ..model import TextBlob
+from ..schema.blob import (
     BlobCreateRequestSchema,
     BlobItemResponseSchema,
     BlobLegacyCreateRequestSchema,
     BlobListResponseSchema,
 )
-
-from . import loads_schema, requires_authorization, requires_capabilities
-from .object import ObjectItemResource, ObjectResource, ObjectUploader
-
 
 class TextBlobUploader(ObjectUploader):
     def on_created(self, object, params):
